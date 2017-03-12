@@ -1,0 +1,63 @@
+*,
+*:before,
+*:after {
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
+
+.container {}
+
+.calculator {
+    margin: 0 auto;
+    height: 400px;
+    width: 400px;
+    background-color: aqua;
+    position: relative;
+}
+
+.well {
+    background-color: #796868;
+    width: 94%;
+    height: 100%;
+    margin-left: 3%;
+}
+
+.game-grid {
+    width: 100%;
+    height: 100%;
+}
+
+.row {
+    background-color: #796868;
+    width: 100%;
+    height: 32.67%;
+}
+
+.row-2 {
+    margin: 1% auto;
+}
+
+.blocks {
+    width: 100%;
+    height: 100%;
+    /*display: inline-block;*/
+}
+.block {
+    display: inline-block;
+    width: 32.67%;
+    height: 100%;
+    background-color: greenyellow;
+}
+
+#block2, #block5, #block8 {
+    margin: auto 1%;
+}
+
+.val {
+    position: absolute;
+    font-size: 4em;
+    margin: 0 auto;
+    padding: 8%;
+}
