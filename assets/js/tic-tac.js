@@ -21,12 +21,11 @@ blocks.forEach(function (block) {
         let eirthCheck = checkTriplets('block2', 'block6', 'block8');
         console.log(firstCheck, secondCheck, thirdCheck, fourthCheck, fifthCheck, sixthCheck, seventhCheck, eirthCheck);
         if(firstCheck || secondCheck || thirdCheck || fourthCheck || fifthCheck || sixthCheck || seventhCheck || eirthCheck) {
-            alert(startSymbol + " Won!!");
+            // alert(startSymbol + " Won!!");
+            document.querySelector('#message').innerHTML = "Congrats " + startSymbol + " Won!!";
         }
     })
 })
-
-console.log("tets",getInnerText('block1'));
 
 function toggleSymbol() {
     return (startSymbol == symbols[0])?symbols[1]:symbols[0];
@@ -51,7 +50,7 @@ function getInnerText(id) {
 }
 
 function highlight(id1, id2, id3) {
-    document.querySelector("#"+id1).setAttribute('backgroundColor', "#ccc");
-    document.querySelector("#"+id2).setAttribute('backgroundColor', "#ccc");
-    document.querySelector("#"+id3).setAttribute('backgroundColor', "#ccc");
+    document.querySelector("#"+id1).setAttribute('style', "background-color: #ccc;");
+    document.querySelector("#"+id2).setAttribute('style', "background-color: #ccc;");
+    document.querySelector("#"+id3).setAttribute('style', "background-color: #ccc;");
 }
