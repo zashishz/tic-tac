@@ -61,3 +61,10 @@
     margin: 0 auto;
     padding: 8%;
 }
+
+#reset {
+    width: 100%;
+    padding: 10px;
+    background-color: #f0ffff;
+    font-size: 20px;
+}

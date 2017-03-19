@@ -1,24 +1,16 @@
-/**
- * Important fields
- * @type {string}
- */
-
-let gameMode = 'onePlayer';
-
+let gameMode = 'twoPlayer';
 //Contains all the Symbols
 let symbols = ['X', 'O'];
-let mode = 'computer';
 
-let startSymbol = 'X';
-let computerSymbol = 'O';
-let humanSymbol = 'X';
+let computerSymbol = 'X';
+let humanSymbol = 'O';
+let currentSymbol = computerSymbol;
 let overallHumanMoves = 0;
 let overallComputerMoves = 0;
 let humanNulls = [];
 let computerNulls = [];
 let humanWinningBlocks = [];
 let computerWinningBlocks = [];
-let currentSymbol = startSymbol;
 let gameOver = false;
 let id1, id2, id3;
 
@@ -31,7 +23,7 @@ let moves = {
     move5: ['block1', 'block2', 'block3'],
     move6: ['block7', 'block8', 'block9'],
     move7: ['block1', 'block4', 'block7'],
-    move8: ['block3', 'block6', 'block9']    
+    move8: ['block3', 'block6', 'block9']
 };
 
 
@@ -40,13 +32,31 @@ blocks.forEach(function (block) {
     block.addEventListener('click', playGame);
 })
 
+document.getElementById('reset').addEventListener('click', reload)
+
+function setGameMode() {
+    gameMode = document.getElementById("player");
+    gameMode= gameMode[gameMode.selectedIndex].value;
+    console.log('gameMode',gameMode);
+}
+
+function reload(){
+    window.location.reload();
+}
+
+// document.addEventListener('onchange',setGameMode);
+setGameMode();
+if(currentSymbol == computerSymbol && gameMode=='onePlayer') {
+    computerMove();
+    currentSymbol = toggleSymbol();
+}
+
 function playGame() {
     if (this.className.includes('notClicked')) {
         this.className = "block clicked";
-        this.childNodes[1].innerHTML = startSymbol;
-        currentSymbol = startSymbol;
-        startSymbol = toggleSymbol();
-        console.log("clicked ", this.id);
+        this.childNodes[1].innerHTML = currentSymbol;
+        //change the symbol
+        currentSymbol = toggleSymbol();
 
         // check if someone Won the game
         for (let move in moves) {
@@ -57,71 +67,47 @@ function playGame() {
             selectMove(id1, id2, id3, humanSymbol);
             selectMove(id1, id2, id3, computerSymbol);
         }
-        console.log('Total overallHumanMoves', overallHumanMoves);
-        console.log('Total overallComputerMoves', overallComputerMoves);
-        console.log('Null Opportunity for stopping human', humanNulls);
-        console.log('Null Opportunity for winning Computer', computerNulls);
-        console.log('humanWinningBlocks', humanWinningBlocks);
-        console.log('computerWinningBlocks', computerWinningBlocks);
 
         //Trigger only when user played his turn
-        if (computerSymbol != currentSymbol && gameMode == 'onePlayer') {
-            // computerMoves(id1, id2, id3);
-             if (overallHumanMoves == 3 || humanWinningBlocks.length ==0) {
+        if (computerSymbol == currentSymbol && gameMode == 'onePlayer') {
+
+            //Trigger only when User has won the game
+            if (overallHumanMoves == 3) {
                 gameOver = checkTriplets(humanWinningBlocks[0], humanWinningBlocks[1], humanWinningBlocks[2]);
             }
-            //Check if computer can win
+            //else Check if computer can win
             else if (overallComputerMoves == 2) {
                 let id = computerNulls[0];
-                document.querySelector('#' + id + ' p').innerHTML = computerSymbol;
-                startSymbol = toggleSymbol();
+                updateData(id);
                 gameOver = checkTriplets(computerWinningBlocks[0], computerWinningBlocks[1], computerWinningBlocks[2]);
             }
-            //Check if User can be stopped from winning
+            //else Check if User can be stopped from winning
             else if (overallHumanMoves == 2) {
                 //use humanNulls Here
                 let id = humanNulls[0];
-                document.querySelector('#' + id + ' p').innerHTML = computerSymbol;
-                document.getElementById(id).className = "block clicked";
-                startSymbol = toggleSymbol();
-                overallHumanMoves = 0;
-                overallComputerMoves = 0;
-                computerNulls = [];
-                humanNulls = [];
-
-            } else if (overallHumanMoves == 1) {
+                updateData(id);
+            }
+            //else Decide next move based on user's Move
+            else if (overallHumanMoves == 1) {
                 //use humanNulls Here
-                let id = getInnerText('block5') == null? 'block5':computerNulls[0];
-                id = (id == null)?humanNulls[0] : id;
-                document.querySelector('#' + id + ' p').innerHTML = computerSymbol;
-                document.getElementById(id).className = "block clicked";
-                startSymbol = toggleSymbol();
-                overallHumanMoves = 0;
-                overallComputerMoves = 0;
-                computerNulls = [];
-                humanNulls = [];
-
-            } else if (overallComputerMoves <= 1) {
+                let id = getInnerText('block5') == null ? 'block5' : computerNulls[0];
+                id = (id == null) ? humanNulls[0] : id;
+                updateData(id);
+            }
+            //If this is first move by computer or second move
+            else if (overallComputerMoves <= 1) {
                 let id;
-                for(let i=0; i<computerNulls.length; i++) {
-                    if(computerNulls[i] == 'block5') {
+                for (let i = 0; i < computerNulls.length; i++) {
+                    if (computerNulls[i] == 'block5') {
                         id = 'block5';
                         break;
                     }
                     id = computerNulls[0];
                 }
-                console.log('eew id', computerNulls);
-                // let id = getInnerText('block5') == null? computerNulls[0]:'block5';
                 if (computerNulls.length > 0) {
-                    document.querySelector('#' + id + ' p').innerHTML = computerSymbol;
-                    document.getElementById(id).className = "block clicked";
-                    startSymbol = toggleSymbol();
-                    overallHumanMoves = 0;
-                    overallComputerMoves = 0;
-                    computerNulls = [];
-                    humanNulls = [];
+                    updateData(id);
                 } else {
-                    if(document.querySelectorAll('.notClicked>p')[0])
+                    if (document.querySelectorAll('.notClicked>p')[0])
                         document.querySelectorAll('.notClicked>p')[0].innerHTML = computerSymbol;
                 }
             }
@@ -141,22 +127,21 @@ function playGame() {
     }
 }
 
-// playGame();
+// Initial Move by Computer in onePlayer MODE
 function computerMove() {
     let blocks = Array.from(document.querySelectorAll('.block'));
     let randomBlock = blocks[Math.floor(Math.random() * blocks.length)];
     document.querySelector('#' + randomBlock.id + ' p').innerHTML = computerSymbol;
-    document.querySelector('#'+randomBlock.id).className = 'block clicked';
+    document.querySelector('#' + randomBlock.id).className = 'block clicked';
     // overallComputerMoves = 1;
 }
 
-computerMove();
-
+//Toggle the Game Symbols
 function toggleSymbol() {
-    return (startSymbol == symbols[0]) ? symbols[1] : symbols[0];
+    return (currentSymbol == symbols[0]) ? symbols[1] : symbols[0];
 }
 
-//Check if consecutive 3 symbols are made and highlight
+//Check if consecutive 3 symbols are formed and then highlight
 function checkTriplets(id1, id2, id3) {
     let text1 = getInnerText(id1);
     let text2 = getInnerText(id2);
@@ -173,15 +158,15 @@ function getInnerText(id) {
     return (document.querySelector('#' + id + ' p').innerHTML == "") ? null : document.querySelector('#' + id + ' p').innerHTML;
 }
 
+//highlight Styling
 function highlight(id1, id2, id3) {
     document.querySelector("#" + id1).setAttribute('style', "background-color: #ccc;");
     document.querySelector("#" + id2).setAttribute('style', "background-color: #ccc;");
     document.querySelector("#" + id3).setAttribute('style', "background-color: #ccc;");
 }
 
-//first Move: check 3nulls in moves and add any one randomly
+//Decides which move to be performed Next by the computer
 function selectMove(id1, id2, id3, symbol) {
-    //select which Move to apply
 
     arguments = Array.from(arguments).splice(0, 3);
     // console.log(arguments);
@@ -197,7 +182,6 @@ function selectMove(id1, id2, id3, symbol) {
             symbolCount++;
         }
     }
-    console.log('symbol', symbol);
     if (symbol == humanSymbol) {
         if ((symbolCount >= overallHumanMoves) && (symbolCount + nullCount == 3)) {
             overallHumanMoves = symbolCount;
@@ -212,4 +196,15 @@ function selectMove(id1, id2, id3, symbol) {
         }
     }
     return;
+}
+
+function updateData(id) {
+    document.querySelector('#' + id + ' p').innerHTML = computerSymbol;
+    document.getElementById(id).className = "block clicked";
+    currentSymbol = toggleSymbol();
+    overallHumanMoves = 0;
+    overallComputerMoves = 0;
+    computerNulls = [];
+    humanNulls = [];
+    console.log('called', updateData);
 }
