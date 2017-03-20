@@ -1,7 +1,7 @@
-let gameMode = 'twoPlayer';
+let gameMode = 'default';
 //Contains all the Symbols
 let symbols = ['X', 'O'];
-
+let message = 'game status';
 let computerSymbol = 'X';
 let humanSymbol = 'O';
 let currentSymbol = computerSymbol;
@@ -11,6 +11,7 @@ let humanNulls = [];
 let computerNulls = [];
 let humanWinningBlocks = [];
 let computerWinningBlocks = [];
+let round = 1;
 let gameOver = false;
 let id1, id2, id3;
 
@@ -26,29 +27,34 @@ let moves = {
     move8: ['block3', 'block6', 'block9']
 };
 
-
-let blocks = document.querySelectorAll(".notClicked");
-blocks.forEach(function (block) {
-    block.addEventListener('click', playGame);
-})
-
 document.getElementById('reset').addEventListener('click', reload)
 
-function setGameMode() {
-    gameMode = document.getElementById("player");
-    gameMode= gameMode[gameMode.selectedIndex].value;
-    console.log('gameMode',gameMode);
+function setGameMode(data) {
+    gameMode = data[data.selectedIndex].value;
+    if (currentSymbol == computerSymbol && gameMode == 'onePlayer') {
+        computerMove();
+        // document.getElementById('console-message').innerHTML = 'Computer : ' + computerSymbol + '   and    ' + 'Human : ' + humanSymbol;
+        currentSymbol = toggleSymbol();
+    } else if (gameMode == 'twoPlayer') {
+        // document.getElementById('console-message').innerHTML = 'Player 1 : ' + computerSymbol + '   and    ' + 'Player 2 : ' + humanSymbol;
+    } else if (gameMode == 'default') {
+        return;
+    }
+    //hide messsage once dropdown is selected
+    document.querySelector("#message").setAttribute('style', "display: none;");
+    let blocks = document.querySelectorAll(".block");
+    blocks.forEach(function (block) {
+        block.addEventListener('click', playGame);
+    })
+    document.getElementById('player').disabled = true;
 }
 
-function reload(){
+if (gameMode == 'default') {
+    document.getElementById('message').innerHTML = 'Please Select Game mode to start Playing';
+}
+
+function reload() {
     window.location.reload();
-}
-
-// document.addEventListener('onchange',setGameMode);
-setGameMode();
-if(currentSymbol == computerSymbol && gameMode=='onePlayer') {
-    computerMove();
-    currentSymbol = toggleSymbol();
 }
 
 function playGame() {
@@ -67,19 +73,20 @@ function playGame() {
             selectMove(id1, id2, id3, humanSymbol);
             selectMove(id1, id2, id3, computerSymbol);
         }
-
         //Trigger only when user played his turn
         if (computerSymbol == currentSymbol && gameMode == 'onePlayer') {
 
             //Trigger only when User has won the game
             if (overallHumanMoves == 3) {
                 gameOver = checkTriplets(humanWinningBlocks[0], humanWinningBlocks[1], humanWinningBlocks[2]);
+                message = humanSymbol + ' Won!!';
             }
             //else Check if computer can win
             else if (overallComputerMoves == 2) {
                 let id = computerNulls[0];
                 updateData(id);
                 gameOver = checkTriplets(computerWinningBlocks[0], computerWinningBlocks[1], computerWinningBlocks[2]);
+                message = computerSymbol + ' Won!!';
             }
             //else Check if User can be stopped from winning
             else if (overallHumanMoves == 2) {
@@ -106,24 +113,49 @@ function playGame() {
                 }
                 if (computerNulls.length > 0) {
                     updateData(id);
-                } else {
-                    if (document.querySelectorAll('.notClicked>p')[0])
-                        document.querySelectorAll('.notClicked>p')[0].innerHTML = computerSymbol;
+                } else if (document.querySelectorAll('.notClicked>p')[0]) {
+                    document.querySelectorAll('.notClicked>p')[0].innerHTML = computerSymbol;
+                    let id = document.getElementsByClassName('notClicked')[0].id;
+                    document.getElementById(id).className = 'block clicked';
                 }
             }
         } else {
             //This Block checks if any player won the game
-            gameOver = checkTriplets(humanWinningBlocks[0], humanWinningBlocks[1], humanWinningBlocks[2]);
-            if (!gameOver)
-                gameOver = checkTriplets(computerWinningBlocks[0], computerWinningBlocks[1], computerWinningBlocks[2]);
+            gameOver = humanWinningBlocks.length>0 ? checkTriplets(humanWinningBlocks[0], humanWinningBlocks[1], humanWinningBlocks[2]):false;
+            message = 'Player 2 Won';
+            if (!gameOver) {
+                gameOver = computerWinningBlocks.length>0 ? checkTriplets(computerWinningBlocks[0], computerWinningBlocks[1], computerWinningBlocks[2]): false;
+                message = 'Player 1 Won';
+            }
         }
     }
     //Remove Click Handlers once game is Over.
     if (gameOver) {
-        var elems = document.querySelectorAll(".block");
+        let elems = document.querySelectorAll(".notClicked");
         [].forEach.call(elems, function (el) {
-            el.classList.remove("notClicked");
+            el.className = "block clicked";
         });
+    }
+    if (document.querySelectorAll('.notClicked').length == 0 && gameOver) {
+       displayMsg(message + '<br />(Click to here try again)');
+    } else if (document.querySelectorAll('.notClicked').length == 0) {
+        displayMsg('Game Draw <br />(Click to here try again)');
+    }
+}
+
+//Prompt message once user wins/draw
+function displayMsg(message) {
+    document.getElementById('message').innerHTML = message;
+    document.querySelector("#message").setAttribute('style', "display: inherit;");
+    document.getElementById('message').addEventListener('click', resetOnClick);
+}
+
+//reset everything click handler
+function resetOnClick() {
+    reset();
+    document.querySelector("#message").setAttribute('style', "display: none;");
+    if((round % 2 == 1) && (gameMode=='onePlayer')) {
+        computerMove();
     }
 }
 
@@ -133,7 +165,6 @@ function computerMove() {
     let randomBlock = blocks[Math.floor(Math.random() * blocks.length)];
     document.querySelector('#' + randomBlock.id + ' p').innerHTML = computerSymbol;
     document.querySelector('#' + randomBlock.id).className = 'block clicked';
-    // overallComputerMoves = 1;
 }
 
 //Toggle the Game Symbols
@@ -160,16 +191,14 @@ function getInnerText(id) {
 
 //highlight Styling
 function highlight(id1, id2, id3) {
-    document.querySelector("#" + id1).setAttribute('style', "background-color: #ccc;");
-    document.querySelector("#" + id2).setAttribute('style', "background-color: #ccc;");
-    document.querySelector("#" + id3).setAttribute('style', "background-color: #ccc;");
+    document.querySelector("#" + id1).classList.add('highlight');
+    document.querySelector("#" + id2).classList.add('highlight');
+    document.querySelector("#" + id3).classList.add('highlight');
 }
 
 //Decides which move to be performed Next by the computer
 function selectMove(id1, id2, id3, symbol) {
-
     arguments = Array.from(arguments).splice(0, 3);
-    // console.log(arguments);
     let nullCount = 0;
     let symbolCount = 0;
     let nulls = [];
@@ -206,5 +235,19 @@ function updateData(id) {
     overallComputerMoves = 0;
     computerNulls = [];
     humanNulls = [];
-    console.log('called', updateData);
+}
+
+function reset() {
+    let elems = document.querySelectorAll(".block");
+    [].forEach.call(elems, function (el) {
+        document.querySelector('#' + el.id + ' p').innerHTML = "";
+        el.className = "block notClicked";
+    });
+    gameOver = false;
+    humanWinningBlocks = [];
+    computerWinningBlocks = [];
+    round++;
+    computerSymbol = (computerSymbol == 'X')? 'O': 'X';
+    humanSymbol = (humanSymbol == 'O')? 'X': 'O';
+    currentSymbol = humanSymbol;
 }
