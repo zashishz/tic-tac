@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Tic Tac Game</title>
+    <link rel="stylesheet" href="assets/css/tic-tac.css">
+</head>
+<body>
+    <div class="container">
+        <div class="calculator">
+            <div class="well">
+                <div class="game-grid">
+                    <div class="row row-1">
+                        <div class="blocks">
+                            <div class="block notClicked" id="block1">
+                                <p class="val"></p>
+                            </div><!-- 
+                                Block 2
+                            --><div class="block notClicked" id="block2">
+                                    <p class="val"></p>
+                                </div><!-- 
+                                Block 3
+                            --><div class="block notClicked" id="block3">
+                                <p class="val"></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row row-2">
+                        <div class="blocks">
+                            <div class="block notClicked" id="block4">
+                                <p class="val"></p>
+                            </div><!-- 
+                                Block 2
+                            --><div class="block notClicked" id="block5">
+                                    <p class="val"></p>
+                                </div><!-- 
+                                Block 3
+                            --><div class="block notClicked" id="block6">
+                                    <p class="val"></p>
+                                </div>
+                        </div>
+                    </div>
+                    <div class="row row-3">
+                        <div class="blocks">
+                            <div class="block notClicked" id="block7">
+                                <p class="val"></p>
+                            </div><!-- 
+                                Block 2
+                            --><div class="block notClicked" id="block8">
+                                    <p class="val"></p>
+                                </div><!-- 
+                                Block 3
+                            --><div class="block notClicked" id="block9">
+                                    <p class="val"></p>
+                                </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="gameControls">
+                <div class="playerSelection">
+                    <select id="player" onchange="setGameMode(this)">
+                        <option value="default" selected="selected">Select Mode</option>
+                        <option value="onePlayer" >One Player</option>
+                        <option value="twoPlayer" >Two Player</option>
+                    </select>
+                </div>
+                <button id="reset">Reset Game!</button>
+                </div>
+                <h3 id="message"></h3>
+                <h3 id="console-message"></h3>
+        </div>
+    </div>
+    <script src="assets/js/tic-tac.js"></script>
+</body>
+</html>
