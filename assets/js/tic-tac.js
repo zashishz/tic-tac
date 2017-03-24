@@ -137,9 +137,9 @@ function playGame() {
         });
     }
     if (document.querySelectorAll('.notClicked').length == 0 && gameOver) {
-       displayMsg(message + '<br />(Click to here try again)');
+       displayMsg(message + '<br />(Click here to try again)');
     } else if (document.querySelectorAll('.notClicked').length == 0) {
-        displayMsg('Game Draw <br />(Click to here try again)');
+        displayMsg('Game Draw <br />(Click here to try again)');
     }
 }
 
