@@ -154,9 +154,9 @@ function displayMsg(message) {
 function resetOnClick() {
     reset();
     document.querySelector("#message").setAttribute('style', "display: none;");
-    // if((round % 2 == 1) && (gameMode=='onePlayer')) {
-    //     computerMove();
-    // }
+    if((round % 2 == 1) && (gameMode=='onePlayer')) {
+        computerMove();
+    }
 }
 
 // Initial Move by Computer in onePlayer MODE
