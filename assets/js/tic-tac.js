@@ -32,7 +32,7 @@ document.getElementById('reset').addEventListener('click', reload)
 function setGameMode(data) {
     gameMode = data[data.selectedIndex].value;
     if (currentSymbol == computerSymbol && gameMode == 'onePlayer') {
-        computerMove();
+        // computerMove();
         // document.getElementById('console-message').innerHTML = 'Computer : ' + computerSymbol + '   and    ' + 'Human : ' + humanSymbol;
         currentSymbol = toggleSymbol();
     } else if (gameMode == 'twoPlayer') {
@@ -154,9 +154,9 @@ function displayMsg(message) {
 function resetOnClick() {
     reset();
     document.querySelector("#message").setAttribute('style', "display: none;");
-    if((round % 2 == 1) && (gameMode=='onePlayer')) {
-        computerMove();
-    }
+    // if((round % 2 == 1) && (gameMode=='onePlayer')) {
+    //     computerMove();
+    // }
 }
 
 // Initial Move by Computer in onePlayer MODE
@@ -250,4 +250,6 @@ function reset() {
     computerSymbol = (computerSymbol == 'X')? 'O': 'X';
     humanSymbol = (humanSymbol == 'O')? 'X': 'O';
     currentSymbol = humanSymbol;
+    overallHumanMoves = 0;
+    overallComputerMoves = 0;
 }
